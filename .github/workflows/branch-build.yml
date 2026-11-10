@@ -158,3 +158,4 @@ jobs:
             echo
             echo "Download with \`gh run download ${{ github.run_id }} -n ${{ steps.apk.outputs.name }}\`."
           } >> "$GITHUB_STEP_SUMMARY"
+# Refresh workflow registration on fork
