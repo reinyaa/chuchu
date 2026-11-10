@@ -78,15 +78,8 @@ jobs:
             zig build -Doptimize=ReleaseSmall -Dtarget=aarch64-linux-android.24 jni
           '
 
-      - name: generate release key
-        run: |
-          cd android/app/ && echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > key.jks
-
-      - name: build android release APK
+      - name: build Android debug APK
         env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           VERSION_CODE: ${{ steps.version.outputs.version_code }}
           VERSION_NAME: ${{ steps.version.outputs.version_name }}
           ANDROID_ABI_FILTERS: arm64-v8a
@@ -95,15 +88,14 @@ jobs:
             set -e
             cd android
             chmod +x ./gradlew
-            if [ -f local.properties ]; then chmod -w local.properties; fi
-            ./gradlew assembleRelease
+            ./gradlew assembleDebug
           '
 
       - name: name APK
         id: apk
         run: |
           set -euo pipefail
-          SRC="$(ls ./android/app/build/outputs/apk/release/*.apk | head -n1)"
+          SRC="$(ls ./android/app/build/outputs/apk/debug/*.apk | head -n1)"
           NAME="chuchu-${{ steps.version.outputs.slug }}-${{ steps.version.outputs.short_sha }}"
           cp "$SRC" "./${NAME}.apk"
           echo "name=${NAME}" >> "$GITHUB_OUTPUT"
